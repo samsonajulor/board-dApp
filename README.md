@@ -1,5 +1,3 @@
-# hard_hat_template
-
-# Remember to Ignore the secrets.json
+# Board DApp
 
 `npx hardhat run scripts/deploy.ts --network sepolia`
