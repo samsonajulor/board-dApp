@@ -12,13 +12,16 @@
   "dependencies": {
     "@nomiclabs/hardhat-ethers": "^2.2.3",
     "@web3-storage/w3cli": "^4.1.2",
+    "buffer": "^6.0.3",
     "ethereum-waffle": "^4.0.10",
     "ganache": "^7.9.1",
+    "gh-pages": "^6.0.0",
     "hardhat": "^2.17.1",
     "hardhat-waffle": "^0.0.1-security",
     "truffle": "^5.11.2",
     "ts-node": "^10.9.1",
     "typescript": "^5.2.2",
+    "wagmi": "^1.4.2",
     "web3": "^4.1.1"
   },
   "devDependencies": {
