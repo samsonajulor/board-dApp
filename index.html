@@ -82,13 +82,6 @@
             margin-top: 10px;
         }
 
-     /* reset css */
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
         .grid-item:hover {
             transform: scale(1.05);
         }
@@ -108,10 +101,13 @@
                  transform: translateY(-10px); /* Bounce down at 60% keyframe */
              }
          }
+         .text {
+          margin-top: 20px;
+         }
    </style>
 </head>
 <body>
-    <h1>ColorBoard Dapp</h1>
+    <h1 class='text'>Color Board</h1>
     <hr>
     <p>Connect MetaMask to interact with the ColorBoard smart contract.</p>
     <button id="connectButton">Connect to MetaMask</button>
@@ -128,7 +124,7 @@
     <!-- <script src="./ethers/dist/ethers.min.js"></script> -->
     <script>
     // Contract address and ABI (update with your contract details)
-const contractAddress = '0xc210319Fdd691Bdd17C98Cc9821f4BEe2A4e1443';
+const contractAddress = '0x1a9D69E6B8DA92181C492641B49eBb97b3148D09';
 const contractABI = [
 	{
 		"inputs": [
