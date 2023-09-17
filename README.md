@@ -64,4 +64,4 @@ Users can interact with the `ColorBoard` contract to:
 ## UI Deployment
 - This contract is deployed to gh pages.
 [gh page](https://samsonajulor.github.io/board-dApp/)
-- RUN `yarn deploy` from the client dir to deploy the frontend
+- RUN `yarn deploy` from the client dir to deploy the frontend.

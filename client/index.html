@@ -272,11 +272,16 @@ function generateGrid() {
   }
 }
 
+let previousClickedBox = null;
+
 function addClickEffect() {
   $('.grid-item').click(async function () {
+    // $('.grid-item').css('background-color', white);
     // Check if MetaMask is connected
     if (window.ethereum && window.ethereum.selectedAddress) {
       try {
+        // Remove the clicked class from the previously clicked box
+        if (previousClickedBox) previousClickedBox.css('background-color', 'white');
         $(this).addClass('clicked');
         setTimeout(() => {
           $(this).removeClass('clicked');
@@ -301,6 +306,7 @@ function addClickEffect() {
 
         // Update the background color of the clicked box with the retrieved color
         $(this).css('background-color', getColorCodeFromName(color));
+        previousClickedBox = $(this);
       } catch (error) {
         console.error('Error:', error);
       }
@@ -319,11 +325,13 @@ function getColorCodeFromName(colorName) {
     case 'Red':
       return 'red';
     default:
-      return 'white'; // Handle unknown colors
+      return 'white';
   }
 }
 
 $(document).ready(function () {
+  // Initialize previousClickedBox as the first box
+  previousClickedBox = $('.grid-item:first-child');
   $('#connectButton').click(connectToMetaMask);
   $('#setColorButton').click(setColor);
   $('#getColorButton').click(getColor);
