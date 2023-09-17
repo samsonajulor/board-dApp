@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ColorBoard Dapp</title>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/web3/1.2.7-rc.0/web3.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <style>
+     /* reset css */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        /* center everything */
+        html, body {
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            /* add space between items */
+            gap: 20px;
+
+        }
+
+        .grid-container {
+            display: grid;
+            grid-template-columns: repeat(7, 50px); /* 7 columns */
+            grid-template-rows: repeat(5, 50px);    /* 5 rows */
+            gap: 5px; /* Gap between grid items */
+        }
+        .grid-item {
+            width: 50px;
+            height: 50px;
+            border: 1px solid #000;
+            text-align: center;
+            vertical-align: middle;
+            font-size: 18px;
+            transition: transform 0.2s ease-in-out;
+            cursor: pointer;
+            animation: none;
+        }
+        .grid-item:hover {
+            transform: scale(1.05);
+        }
+
+         .grid-item.clicked {
+             animation: bounce 0.5s ease infinite; /* Apply bounce animation when clicked */
+         }
+
+         @keyframes bounce {
+             0%, 20%, 50%, 80%, 100% {
+                 transform: translateY(0); /* Initial and final state, no translation */
+             }
+             40% {
+                 transform: translateY(-20px); /* Bounce up at 40% keyframe */
+             }
+             60% {
+                 transform: translateY(-10px); /* Bounce down at 60% keyframe */
+             }
+         }
+   </style>
+</head>
+<body>
+    <h1>ColorBoard Dapp</h1>
+    <hr>
+    <p>Connect MetaMask to interact with the ColorBoard smart contract.</p>
+    <button id="connectButton">Connect to MetaMask</button>
+
+    <div class="grid-container">
+        <!-- Grid items will be generated here -->
+    </div>
+
+    <div id="coordinates">
+        Clicked Box Coordinates: X: - Y: -
+    </div>
+    <!-- <script src="app.js"></script> -->
+    <!-- <script src="dist/bundle.js" type="module"></script> -->
+    <!-- <script src="./ethers/dist/ethers.min.js"></script> -->
+    <script>
+    // Contract address and ABI (update with your contract details)
+const contractAddress = '0xc210319Fdd691Bdd17C98Cc9821f4BEe2A4e1443';
+const contractABI = [
+	{
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "x",
+				"type": "uint256"
+			},
+			{
+				"internalType": "uint256",
+				"name": "y",
+				"type": "uint256"
+			},
+			{
+				"internalType": "uint256",
+				"name": "color",
+				"type": "uint256"
+			}
+		],
+		"name": "setColor",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"stateMutability": "nonpayable",
+		"type": "constructor"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			},
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"name": "board",
+		"outputs": [
+			{
+				"internalType": "string",
+				"name": "",
+				"type": "string"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "BOARD_SIZE_X",
+		"outputs": [
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "BOARD_SIZE_Y",
+		"outputs": [
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"name": "colors",
+		"outputs": [
+			{
+				"internalType": "string",
+				"name": "",
+				"type": "string"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "x",
+				"type": "uint256"
+			},
+			{
+				"internalType": "uint256",
+				"name": "y",
+				"type": "uint256"
+			}
+		],
+		"name": "getColor",
+		"outputs": [
+			{
+				"internalType": "string",
+				"name": "",
+				"type": "string"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	}
+];
+
+// MetaMask setup
+async function connectToMetaMask() {
+  if (window.ethereum) {
+    try {
+      const accounts = await ethereum.request({method: "eth_requestAccounts"});
+      console.log(accounts, 'accounts');
+      alert('Connected to MetaMask!');
+    } catch (error) {
+      console.error('MetaMask connection error:', error);
+    }
+  } else {
+    alert('MetaMask not detected. Please install MetaMask.');
+  }
+}
+
+// Set Color function
+async function setColor() {
+  const x = parseInt($('#xCoordinate').val());
+  const y = parseInt($('#yCoordinate').val());
+  const color = parseInt($('#color').val());
+
+  if (!isNaN(x) && !isNaN(y) && !isNaN(color)) {
+    window.web3 = await new Web3(window.ethereum);
+    window.contract = await new window.web3.eth.Contract(contractABI, contractAddress);
+
+    // get the signer
+    // const signer = window.web3.eth.defaultAccount;
+    
+    try {
+      await window.contract.methods.setColor(x, y, color).call();
+      $('#result').text(`Color set successfully at (${x}, ${y})`);
+    } catch (error) {
+      $('#result').text(`Error setting color: ${error.message}`);
+    }
+  } else {
+    $('#result').text('Invalid input. Please check the coordinates and color.');
+  }
+}
+
+// Get Color function
+async function getColor(x, y) {
+  if (!isNaN(x) && !isNaN(y)) {
+    try {
+      const color = await window.contract.methods.getColor(x, y).call();
+      console.log(color, 'color');
+      $('#result').text(`Color at (${x}, ${y}): ${color}`);
+    } catch (error) {
+      $('#result').text(`Error retrieving color: ${error.message}`);
+    }
+  } else {
+    $('#result').text('Invalid input. Please check the coordinates.');
+  }
+}
+
+function generateGrid() {
+  const gridContainer = $('.grid-container');
+
+  for (let y = 0; y < 5; y++) {
+    for (let x = 0; x < 7; x++) {
+      const gridItem = $('<div></div>').addClass('grid-item').attr('data-x', x).attr('data-y', y);
+
+      gridContainer.append(gridItem);
+    }
+  }
+}
+
+function addClickEffect() {
+  $('.grid-item').click(async function () {
+    // Check if MetaMask is connected
+    if (window.ethereum && window.ethereum.selectedAddress) {
+      try {
+        $(this).addClass('clicked');
+        setTimeout(() => {
+          $(this).removeClass('clicked');
+        }, 300);
+        const xCoordinate = $(this).data('x');
+        const yCoordinate = $(this).data('y');
+
+        $('#coordinates').text(`Coordinates: X: ${xCoordinate} - Y: ${yCoordinate}`);
+
+        // save the coordinates to localstorage
+        localStorage.setItem('coordinates', JSON.stringify({ x: xCoordinate, y: yCoordinate }));
+
+        // Query the getColor function of the contract
+        window.web3 = await new Web3(window.ethereum);
+        
+        window.contract = await new window.web3.eth.Contract(contractABI, contractAddress);
+
+        // const color = await window.contract.methods.getColor(xCoordinate, yCoordinate).call();
+        console.log(xCoordinate, yCoordinate, 'coordinates', await window.contract)
+        const color = await window.contract.methods.getColor(xCoordinate, yCoordinate).call();
+        console.log(color, 'color');
+
+        // Update the background color of the clicked box with the retrieved color
+        $(this).css('background-color', getColorCodeFromName(color));
+      } catch (error) {
+        console.error('Error:', error);
+      }
+    } else {
+      alert('MetaMask is not connected. Please connect MetaMask to your wallet.');
+    }
+  });
+}
+
+function getColorCodeFromName(colorName) {
+  switch (colorName) {
+    case 'White':
+      return 'white';
+    case 'Black':
+      return 'black';
+    case 'Red':
+      return 'red';
+    default:
+      return 'white'; // Handle unknown colors
+  }
+}
+
+$(document).ready(function () {
+  $('#connectButton').click(connectToMetaMask);
+  $('#setColorButton').click(setColor);
+  $('#getColorButton').click(getColor);
+  generateGrid();
+  addClickEffect();
+});
+</script>
+</body>
+</html>
