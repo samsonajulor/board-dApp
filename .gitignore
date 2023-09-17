@@ -131,5 +131,5 @@ dist
 
 cache
 archifacts
-typechain-TypeScript
+typechain-types
 secrets.json

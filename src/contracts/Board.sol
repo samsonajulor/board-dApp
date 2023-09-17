@@ -6,8 +6,8 @@ import "@openzeppelin/contracts/utils/math/SafeMath.sol";
 contract ColorBoard {
     using SafeMath for uint256; // Use SafeMath for uint256
 
-    uint public constant BOARD_SIZE_X = 5; // 7 columns
-    uint public constant BOARD_SIZE_Y = 7; // 5 rows
+    uint public constant BOARD_SIZE_X = 5;
+    uint public constant BOARD_SIZE_Y = 7;
 
     mapping(uint => string) public colors;
 
@@ -60,7 +60,7 @@ contract ColorBoard {
     function setColor(uint x, uint y, uint color) public {
         require(x < BOARD_SIZE_X, "Invalid X coordinate");
         require(y < BOARD_SIZE_Y, "Invalid Y coordinate");
-        require(color < 3, "Invalid color"); // Make sure color is in the range [0, 2]
+        require(color < 3, "Invalid color");
 
         board[x][y] = colors[color];
     }
