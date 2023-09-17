@@ -274,6 +274,7 @@ function generateGrid() {
 
 function addClickEffect() {
   $('.grid-item').click(async function () {
+    $(this).css('background-color', white);
     // Check if MetaMask is connected
     if (window.ethereum && window.ethereum.selectedAddress) {
       try {
@@ -319,7 +320,7 @@ function getColorCodeFromName(colorName) {
     case 'Red':
       return 'red';
     default:
-      return 'white'; // Handle unknown colors
+      return 'white';
   }
 }
 
