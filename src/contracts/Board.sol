@@ -15,47 +15,21 @@ contract ColorBoard {
     string[BOARD_SIZE_X][BOARD_SIZE_Y] public board;
 
     constructor() {
-         // Initialize the board with predefined colors
-    board[0][0] = "White";
-    board[1][0] = "Black";
-    board[2][0] = "Red";
-    board[3][0] = "Black";
-    board[4][0] = "White";
-    board[5][0] = "Red";
-    board[6][0] = "Black";
+        colors[1] = "White";
+        colors[2] = "Black";
+        colors[3] = "Red";
+        colors[4] = "Blue";
 
-    board[0][1] = "Red";
-    board[1][1] = "Black";
-    board[2][1] = "White";
-    board[3][1] = "Red";
-    board[4][1] = "Black";
-    board[5][1] = "White";
-    board[6][1] = "Black";
-
-    board[0][2] = "White";
-    board[1][2] = "Red";
-    board[2][2] = "Black";
-    board[3][2] = "White";
-    board[4][2] = "Black";
-    board[5][2] = "Red";
-    board[6][2] = "White";
-
-    board[0][3] = "Black";
-    board[1][3] = "White";
-    board[2][3] = "Red";
-    board[3][3] = "Black";
-    board[4][3] = "White";
-    board[5][3] = "Black";
-    board[6][3] = "Red";
-
-    board[0][4] = "Red";
-    board[1][4] = "Black";
-    board[2][4] = "White";
-    board[3][4] = "Red";
-    board[4][4] = "Black";
-    board[5][4] = "White";
-    board[6][4] = "Black";
-}
+        // Initialize the board with random colors
+        for (uint256 x = 0; x < BOARD_SIZE_Y; x++) {
+            for (uint256 y = 0; y < BOARD_SIZE_X; y++) {
+                uint256 randomValue = uint256(keccak256(abi.encodePacked(block.timestamp, msg.sender, x, y)));
+                uint256 randomColor = randomValue % 3 + 1;
+                string memory color_ = colors[randomColor];
+                board[x][y] = color_;
+            }
+        }
+    }
 
     function setColor(uint x, uint y, uint color) public {
         require(x < BOARD_SIZE_X, "Invalid X coordinate");

@@ -1,6 +1,6 @@
 # ColorBoard Contract Readme
 
-## ADDRESS AT: 0xc210319Fdd691Bdd17C98Cc9821f4BEe2A4e1443
+## ADDRESS AT: 0x1a9D69E6B8DA92181C492641B49eBb97b3148D09
 
 ## Overview
 
@@ -57,9 +57,13 @@ Users can interact with the `ColorBoard` contract to:
 ## Contract Deployment
 
 - This contract has been deployed to the Sepolia Testnest
-[contract address](https://sepolia.etherscan.io/address/0xc210319Fdd691Bdd17C98Cc9821f4BEe2A4e1443)
+[contract address](https://sepolia.etherscan.io/address/0x1a9D69E6B8DA92181C492641B49eBb97b3148D09)
 
 - RUN `npx hardhat run scripts/deploy.ts --network sepolia` from the src dir to deploy the contract.
+
+- This contract has been verified at the Sepolia Testnest
+[contract address](https://sepolia.etherscan.io/address/0x1a9D69E6B8DA92181C492641B49eBb97b3148D09#code)
+- RUN `npx hardhat verify --network sepolia 0x1a9D69E6B8DA92181C492641B49eBb97b3148D09` from src dir to verify the contract
 
 ## UI Deployment
 - This contract is deployed to gh pages.
