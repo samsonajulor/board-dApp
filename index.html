@@ -7,41 +7,88 @@
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/web3/1.2.7-rc.0/web3.min.js"></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <style>
+        /* Reset CSS */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            background-color: #222;
+            /* background-image: url('game-background.jpg'); */
+            background-size: cover;
+            background-repeat: no-repeat;
+            font-family: 'Arial', sans-serif;
+            color: #fff;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 20px;
+        }
+
+        h1, p {
+            text-align: center;
+            font-size: 24px;
+        }
+
+        /* Game grid */
+        .grid-container {
+            display: grid;
+            grid-template-columns: repeat(7, 50px);
+            grid-template-rows: repeat(5, 50px);
+            gap: 5px;
+            margin-top: 20px;
+        }
+
+        .grid-item {
+            width: 50px;
+            height: 50px;
+            border: 2px solid #fff;
+            text-align: center;
+            vertical-align: middle;
+            font-size: 18px;
+            transition: transform 0.2s ease-in-out;
+            cursor: pointer;
+            background-color: white;
+            box-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
+        }
+
+        /* Connect button */
+        #connectButton {
+            background-color: #4CAF50;
+            border: none;
+            padding: 10px 20px;
+            font-size: 18px;
+            border-radius: 5px;
+            color: #fff;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        #connectButton:hover {
+            background-color: #45a049;
+        }
+
+        /* Coordinates display */
+        #coordinates {
+            font-size: 16px;
+        }
+
+        /* Result display */
+        #result {
+            font-size: 18px;
+            margin-top: 10px;
+        }
+
      /* reset css */
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
         }
-        /* center everything */
-        html, body {
-            height: 100%;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            /* add space between items */
-            gap: 20px;
 
-        }
-
-        .grid-container {
-            display: grid;
-            grid-template-columns: repeat(7, 50px); /* 7 columns */
-            grid-template-rows: repeat(5, 50px);    /* 5 rows */
-            gap: 5px; /* Gap between grid items */
-        }
-        .grid-item {
-            width: 50px;
-            height: 50px;
-            border: 1px solid #000;
-            text-align: center;
-            vertical-align: middle;
-            font-size: 18px;
-            transition: transform 0.2s ease-in-out;
-            cursor: pointer;
-            animation: none;
-        }
         .grid-item:hover {
             transform: scale(1.05);
         }
@@ -272,12 +319,16 @@ function generateGrid() {
   }
 }
 
+let previousClickedBox = null;
+
 function addClickEffect() {
   $('.grid-item').click(async function () {
-    $(this).css('background-color', white);
+    // $('.grid-item').css('background-color', white);
     // Check if MetaMask is connected
     if (window.ethereum && window.ethereum.selectedAddress) {
       try {
+        // Remove the clicked class from the previously clicked box
+        if (previousClickedBox) previousClickedBox.css('background-color', 'white');
         $(this).addClass('clicked');
         setTimeout(() => {
           $(this).removeClass('clicked');
@@ -302,6 +353,7 @@ function addClickEffect() {
 
         // Update the background color of the clicked box with the retrieved color
         $(this).css('background-color', getColorCodeFromName(color));
+        previousClickedBox = $(this);
       } catch (error) {
         console.error('Error:', error);
       }
@@ -325,6 +377,8 @@ function getColorCodeFromName(colorName) {
 }
 
 $(document).ready(function () {
+  // Initialize previousClickedBox as the first box
+  previousClickedBox = $('.grid-item:first-child');
   $('#connectButton').click(connectToMetaMask);
   $('#setColorButton').click(setColor);
   $('#getColorButton').click(getColor);
